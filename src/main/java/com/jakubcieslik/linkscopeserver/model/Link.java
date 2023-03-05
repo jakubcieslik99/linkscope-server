@@ -16,16 +16,17 @@ import org.hibernate.annotations.GenericGenerator;
 @Table(name = "link")
 public class Link {
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO, generator = "linkIdSequenceGenerator")
   @GenericGenerator(
       name = "linkIdSequenceGenerator",
       strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
       parameters = {
-          @org.hibernate.annotations.Parameter(name = "sequence_name", value = "user_sequence"),
+          @org.hibernate.annotations.Parameter(name = "sequence_name", value = "link_sequence"),
           @org.hibernate.annotations.Parameter(name = "initial_value", value = "100000000"),
           @org.hibernate.annotations.Parameter(name = "increment_size", value = "1")
       }
   )
+  @GeneratedValue(strategy = GenerationType.AUTO, generator = "linkIdSequenceGenerator")
+  @Column(name = "id", updatable = false)
   private Long id;
 
   @Column(nullable = false)
@@ -36,6 +37,8 @@ public class Link {
   @Size(max = 255)
   private String link;
 
+  //relations
   @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id", nullable = false)
   private User user;
 }

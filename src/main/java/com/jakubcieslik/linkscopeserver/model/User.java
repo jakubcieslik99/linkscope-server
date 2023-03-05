@@ -10,6 +10,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import java.util.List;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,7 +20,6 @@ import java.util.List;
 @Table(name = "user")
 public class User {
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO, generator = "userIdSequenceGenerator")
   @GenericGenerator(
       name = "userIdSequenceGenerator",
       strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
@@ -29,6 +29,8 @@ public class User {
           @Parameter(name = "increment_size", value = "1")
       }
   )
+  @GeneratedValue(strategy = GenerationType.AUTO, generator = "userIdSequenceGenerator")
+  @Column(name = "id", updatable = false)
   private Long id;
 
   @Column(nullable = false, unique = true)
@@ -39,7 +41,7 @@ public class User {
   @Size(max = 255)
   private String password;
 
-  @Column(nullable = false)
+  @Column(nullable = false, unique = true)
   @Size(max = 30)
   private String alias;
 
@@ -51,7 +53,10 @@ public class User {
   @Size(max = 255)
   private String bio;
 
-  @OneToMany(cascade = CascadeType.ALL)
-  @JoinColumn(name = "user_id")
-  private List<Link> links;
+  //relations
+  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Link> links; //order & can have duplicates
+
+  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+  private Set<Token> tokens; //no order & unique
 }
