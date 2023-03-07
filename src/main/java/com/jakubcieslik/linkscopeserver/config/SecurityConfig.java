@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 
 @RequiredArgsConstructor
 @Configuration
@@ -24,6 +25,15 @@ public class SecurityConfig {
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
     httpSecurity
+        .headers()
+        .frameOptions().sameOrigin()
+        .contentSecurityPolicy("default-src 'self'; base-uri 'self'; font-src 'self'; script-src 'self'")
+        .and()
+        .httpStrictTransportSecurity().includeSubDomains(true).maxAgeInSeconds(15552000) //problem
+        .and()
+        .referrerPolicy(ReferrerPolicyHeaderWriter.ReferrerPolicy.NO_REFERRER);
+
+    httpSecurity
         .exceptionHandling().authenticationEntryPoint(authEntryPoint)
         .and()
         .addFilterBefore(new JWTFilter(authProvider), BasicAuthenticationFilter.class)
@@ -32,7 +42,7 @@ public class SecurityConfig {
         .and()
         .authorizeHttpRequests(requests -> requests
             .requestMatchers(HttpMethod.POST, "/auth/register", "/auth/login").permitAll()
-            .requestMatchers(HttpMethod.GET, "/auth/refresh", "/auth/logout").permitAll()
+            .requestMatchers(HttpMethod.GET, "/auth/refreshToken", "/auth/logout", "/profile/getProfile/*").permitAll()
             .anyRequest().authenticated()
         );
 
