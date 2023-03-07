@@ -39,7 +39,7 @@ public class AuthService {
   private User findUserModel(String login) {
     Optional<User> user = userRepository.findByLogin(login);
     if (user.isEmpty())
-      throw new AppError("User with this email doesn't exist.", HttpStatus.NOT_FOUND);
+      throw new AppError("User doesn't exist.", HttpStatus.NOT_FOUND);
 
     return user.get();
   }
@@ -76,6 +76,8 @@ public class AuthService {
         .login(registerReqDTO.getLogin())
         .password(passwordEncoder.encode(CharBuffer.wrap(registerReqDTO.getPassword())))
         .alias(registerReqDTO.getAlias())
+        .title(registerReqDTO.getAlias().substring(0, 1).toUpperCase() + registerReqDTO.getAlias().substring(1))
+        .bio("")
         .build();
 
     userRepository.save(user);

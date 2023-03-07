@@ -9,7 +9,6 @@ import com.jakubcieslik.linkscopeserver.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +18,7 @@ import java.time.Duration;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
-  
+
   private final AuthService authService;
   private final JWTProvider jwtProvider;
 
@@ -50,7 +49,7 @@ public class AuthController {
 
       return ResponseEntity.status(HttpStatus.CONFLICT)
           .headers(jwtProvider.setRefreshTokenCookie("", -1L))
-          .body(new ErrorResDTO("Someone is already logged in and has been logged out for safety reasons.", HttpStatus.CONFLICT.value()));
+          .body(new ErrorResDTO("Someone is already logged in. Log out or try again.", HttpStatus.CONFLICT.value()));
     }
 
     UserInfo userInfo = authService.login(loginReqDTO);
@@ -64,7 +63,7 @@ public class AuthController {
         .body(LoginResDTO.builder().userInfo(userInfo).accessToken(accessToken).build());
   }
 
-  @GetMapping("/refresh")
+  @GetMapping("/refreshToken")
   @ResponseBody
   public ResponseEntity<RefreshResDTO> refresh(@CookieValue(value = "refreshToken", defaultValue = "") String refreshTokenCookie) {
     if (refreshTokenCookie.isEmpty()) throw new AppError(Constants.UNAUTHORIZED, HttpStatus.UNAUTHORIZED);
@@ -85,13 +84,5 @@ public class AuthController {
 
     return ResponseEntity.noContent()
         .headers(jwtProvider.setRefreshTokenCookie("", -1L)).build();
-  }
-
-
-  //testing auth endpoint
-  @GetMapping("/test")
-  public ResponseEntity<MessageResDTO> test(@AuthenticationPrincipal UserInfo userInfo) {
-    return ResponseEntity.status(HttpStatus.OK)
-        .body(MessageResDTO.builder().message("Authorized user: " + userInfo.getLogin()).build());
   }
 }

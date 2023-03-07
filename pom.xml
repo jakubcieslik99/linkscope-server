@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.jakubcieslik</groupId>
     <artifactId>linkscope-server</artifactId>
-    <version>0.3.0</version>
+    <version>0.4.0</version>
     <name>linkscope-server</name>
     <description>LinkScope Server 🔗</description>
     <properties>
