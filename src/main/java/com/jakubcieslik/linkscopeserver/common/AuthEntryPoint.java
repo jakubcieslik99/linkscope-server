@@ -27,6 +27,7 @@ public class AuthEntryPoint implements AuthenticationEntryPoint {
       HttpServletResponse response,
       AuthenticationException authException
   ) throws IOException, ServletException {
+
     ErrorResDTO errorResDTO = new ErrorResDTO(message, httpStatus.value());
 
     response.setContentType(MediaType.APPLICATION_JSON_VALUE);

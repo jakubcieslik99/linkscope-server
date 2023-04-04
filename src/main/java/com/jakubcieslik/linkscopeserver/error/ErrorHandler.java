@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
-//@Order(Ordered.HIGHEST_PRECEDENCE)
 public class ErrorHandler {
 
   @ExceptionHandler(value = {AppError.class})
