@@ -3,6 +3,8 @@ package com.jakubcieslik.linkscopeserver.config;
 import com.jakubcieslik.linkscopeserver.common.AuthEntryPoint;
 import com.jakubcieslik.linkscopeserver.filter.JWTFilter;
 import com.jakubcieslik.linkscopeserver.filter.JWTProvider;
+import com.jakubcieslik.linkscopeserver.filter.RateLimiterFilter;
+import com.jakubcieslik.linkscopeserver.filter.RateLimiterProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,6 +23,7 @@ public class SecurityConfig {
 
   private final AuthEntryPoint authEntryPoint;
   private final JWTProvider authProvider;
+  private final RateLimiterProvider rateLimiterProvider;
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -37,6 +40,7 @@ public class SecurityConfig {
         .exceptionHandling().authenticationEntryPoint(authEntryPoint)
         .and()
         .addFilterBefore(new JWTFilter(authProvider), BasicAuthenticationFilter.class)
+        .addFilterBefore(new RateLimiterFilter(rateLimiterProvider), JWTFilter.class)
         .csrf().disable()
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         .and()
