@@ -3,16 +3,22 @@ package com.jakubcieslik.linkscopeserver.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jakubcieslik.linkscopeserver.common.Constants;
 import com.jakubcieslik.linkscopeserver.dto.RegisterReqDTO;
+import com.jakubcieslik.linkscopeserver.model.User;
+import com.jakubcieslik.linkscopeserver.repository.UserRepository;
 import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import java.util.Optional;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -25,8 +31,11 @@ public class AuthControllerRegisterTests {
   @Autowired
   private ObjectMapper objectMapper;
 
+  @MockBean
+  private UserRepository userRepository;
+
   @Test
-  public void testIfSomeoneIsAlreadyLoggedIn() throws Exception {
+  public void someoneIsAlreadyLoggedIn() throws Exception {
     RegisterReqDTO reqData = new RegisterReqDTO(
         "test@gmail.com",
         "test123!".toCharArray(),
@@ -48,7 +57,7 @@ public class AuthControllerRegisterTests {
   }
 
   @Test
-  void testIfNoBodyIsProvided() throws Exception {
+  void noBodyIsProvided() throws Exception {
     final MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
         .post(ENDPOINT_PATH + "/register")
         .contentType("application/json");
@@ -60,7 +69,7 @@ public class AuthControllerRegisterTests {
   }
 
   @Test
-  void testIfEmailIsInvalid() throws Exception {
+  void emailIsInvalid() throws Exception {
     RegisterReqDTO reqData = new RegisterReqDTO(
         "",
         "test123!".toCharArray(),
@@ -81,7 +90,7 @@ public class AuthControllerRegisterTests {
   }
 
   @Test
-  public void testIfUserWithGivenEmailAlreadyExists() throws Exception {
+  public void userWithGivenEmailAlreadyExists() throws Exception {
     RegisterReqDTO reqData = new RegisterReqDTO(
         "test@gmail.com",
         "test123!".toCharArray(),
@@ -89,6 +98,8 @@ public class AuthControllerRegisterTests {
         "test",
         true
     );
+
+    Mockito.when(userRepository.findByLogin(Mockito.any())).thenReturn(Optional.of(new User()));
 
     final MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
         .post(ENDPOINT_PATH + "/register")
@@ -102,7 +113,7 @@ public class AuthControllerRegisterTests {
   }
 
   @Test
-  public void testIfUserWithGivenAliasAlreadyExists() throws Exception {
+  public void userWithGivenAliasAlreadyExists() throws Exception {
     RegisterReqDTO reqData = new RegisterReqDTO(
         "newtest@gmail.com",
         "test123!".toCharArray(),
@@ -110,6 +121,8 @@ public class AuthControllerRegisterTests {
         "test",
         true
     );
+
+    Mockito.when(userRepository.findByAlias(Mockito.any())).thenReturn(Optional.of(new User()));
 
     final MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
         .post(ENDPOINT_PATH + "/register")
@@ -123,7 +136,7 @@ public class AuthControllerRegisterTests {
   }
 
   @Test
-  public void testIfUserHasBeenSuccessfullyRegistered() throws Exception {
+  public void userHasBeenSuccessfullyRegistered() throws Exception {
     RegisterReqDTO reqData = new RegisterReqDTO(
         "newtest@gmail.com",
         "test123!".toCharArray(),
@@ -131,6 +144,8 @@ public class AuthControllerRegisterTests {
         "newtest",
         true
     );
+
+    Mockito.when(userRepository.save(Mockito.any())).thenReturn(null);
 
     final MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
         .post(ENDPOINT_PATH + "/register")
