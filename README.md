@@ -5,7 +5,7 @@
 📌 A REST API server used for handling users pages containing their social media links. Project contains Java Spring Boot app
 as a backend (server). Database used in this project is MySQL.
 
-![GitHub pom.xml version (subfolder of monorepo)](https://img.shields.io/badge/server%20version-1.3.0-orange)
+![GitHub pom.xml version (subfolder of monorepo)](https://img.shields.io/badge/server%20version-1.4.0-orange)
 ![GitHub top language](https://img.shields.io/github/languages/top/jakubcieslik99/linkscope-server)
 ![GitHub Java version](https://img.shields.io/badge/java%20version-17-yellowgreen)
 ![GitHub repo size](https://img.shields.io/github/repo-size/jakubcieslik99/linkscope-server)
